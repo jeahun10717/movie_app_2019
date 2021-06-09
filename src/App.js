@@ -1,3 +1,5 @@
+import { PropTypes } from "prop-types";
+
 const foodILike = [
   {
     id: 1,
@@ -6,7 +8,7 @@ const foodILike = [
   },
   {
     id: 2,
-    name: 'steak',
+    name: 55,
     image: 'https://www.seriouseats.com/thmb/EZaQnk1yjGYVIkASseEWqtFRHyc=/960x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/__opt__aboutcom__coeus__resources__content_migration__serious_eats__seriouseats.com__recipes__images__2015__05__Anova-Steak-Guide-Sous-Vide-Photos15-beauty-159b7038c56a4e7685b57f478ca3e4c8.jpg'
   },
   {
@@ -20,9 +22,14 @@ function Food(props) {
   return (
     <div>
     <h1>I like {props.name}</h1>
-    <img src={props.image}></img>
+    <img src={props.image} alt={props.name}></img>
     </div>
   )
+}
+
+Food.propTypes = {
+  name: PropTypes.string.isRequired,   //name 은 반드시 string 이여야 한다.
+  image: PropTypes.string.isRequired,  //image 는 반드시 string 이여야 한다.
 }
 
 function App() {
