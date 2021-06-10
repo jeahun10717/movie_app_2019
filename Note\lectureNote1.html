@@ -393,7 +393,7 @@ function Food(props) {
   )
 }</code></pre>
 <p>위의 소스에서 서버에서 받아오는 데이터중 name 에 해당하는 필드는 반드시 string 이여야 한다면 기존의 react 는 아래와 같이 아무런 오류를 잡아주지 못한다.</p>
-<p><img src="./image/img6.png" alt="use map for reveal API data"></p>
+<p><img src="./image/img7.png" alt="use map for reveal API data"></p>
 <p>하지만 prop-types 를 아래와 같이 사용하면 오류를 뱉어준다.</p>
 <pre><code class="language-javascript">import { PropTypes } from "prop-types";
 
@@ -428,6 +428,181 @@ Food.propTypes = {
   name: PropTypes.string.isRequired,   //name 은 반드시 string 이여야 한다.
   image: PropTypes.string.isRequired,  //image 는 반드시 string 이여야 한다.
 }</code></pre>
+<p><img src="./image/img8.png" alt="prop-types"></p>
+<h2 id="3-state">3. STATE</h2>
+<p>이제까지 살펴봤던 Component 들은 함수형 Component 였다. state 를 배우기 앞서 Class Component 를 배워보자.</p>
+<h3 id="3-0-class-components-and-state-10-11-">3.0 Class Components and State (10:11)</h3>
+<p>react Class Component 의 기본 구성은 아래와 같다</p>
+<pre><code class="language-javascript">import React from "react";
+
+class App extends React.Component{ // 1.
+  state = {
+    count: 0
+  };
+  add = ()=&gt;{
+    console.log("add");
+  }
+  minus = ()=&gt;{
+    console.log("minus");
+  }
+    render() { // 2.
+    return &lt;div&gt;
+      &lt;h1&gt;The number is : {this.state.count}&lt;/h1&gt; // 3.
+      &lt;button onClick={this.add}&gt;Add&lt;/button&gt; // 4.
+      &lt;button onClick={this.minus}&gt;Minus&lt;/button&gt;
+    &lt;/div&gt;
+  }
+}
+
+export default App;</code></pre>
+<ol>
+<li>class App extends React.Component 의 의미
+React.Component 라는 부모에게 App 이라는 자식이 그 속성을 상속 받았다는 뜻.</li>
+<li>functional Component 와는 다른 점
+functional Component 와는 달리 class 는 함수가 아니므로 return 이 존재하지 않으며 render 라는 함수를 사용해야 한다.</li>
+<li>class 형 Component 를 사용하는 이유
+state 를 사용하기 위함인데 위의 소스와 같이 state 도 기본적으로 객체이므로 위와 같이 접근하면 된다.</li>
+<li>button onClick
+여기서는 주의점인데 이벤트 사용시 아래를 주의해야 한다.</li>
+<li>기본 html onclick 과 달리 react onClick은 <a href="https://namu.wiki/w/%ED%97%9D%EA%B0%80%EB%A6%AC%EC%95%88%20%ED%91%9C%EA%B8%B0%EB%B2%95">헝가리안 표기법</a>을 따른다 --&gt; onclick(x) onClick(o)</li>
+<li>기본적으로 이벤트는 함수선언식으로 해야 한다.<pre><code class="language-javascript">&lt;button onClick={this.add}&gt;Add&lt;/button&gt; // (O)
+&lt;button onClick={this.add()}&gt;Add&lt;/button&gt; // (X)</code></pre>
+(조금만 생각해 보면 당연한 것. render 가 실행되면서 만약 this.add() 를 만나면 바로 실행 됨. 우리가 원하는 것은 클릭이 되었을 때 실행이 되야 하는 것이다. 따라서 onClick 이라는 곳에 함수를 할당하는 것으로 생각해야 한다.)</li>
+</ol>
+<h3 id="3-1-all-you-need-to-know-about-state-07-55-">3.1 All you need to know about State (07:55)</h3>
+<p>이제 state 를 사용하는 방법을 알아보자.</p>
+<pre><code class="language-javascript">import React from "react";
+
+class App extends React.Component{
+  state = {
+    count: 0
+  };
+  add = ()=&gt;{
+    this.setState({ state: state+1 });
+  }
+  minus = ()=&gt;{
+    this.setState({ state: state-1 });
+  }
+    render() { // react 는 자동으로 이 render method 를 실행하려 함
+    return &lt;div&gt;
+      &lt;h1&gt;The number is : {this.state.count}&lt;/h1&gt;
+      &lt;button onClick={this.add}&gt;Add&lt;/button&gt;
+      &lt;button onClick={this.minus}&gt;Minus&lt;/button&gt;
+    &lt;/div&gt;
+  }
+}
+
+export default App;</code></pre>
+<p>우리가 원하는 것은 add 라는 버튼을 눌렀을 때 1이 올라가고 Minus 를 눌렀을 때 1이 내려가는 것을 원한다. 하지만 위의 소스를 실행하면 정상동작하지 않고 아래의 경고 메시지를 준다.</p>
+<p><img src="./image/img9.png" alt="prop-types"></p>
+<p>이는 react 는 state 의 직접접근을 허용하지 않기 때문이다. 따러서 <strong>setState</strong> 라는 메소드를 사용해야 한다.</p>
+<pre><code class="language-javascript">import React from "react";
+
+class App extends React.Component{
+  state = {
+    count: 0
+  };
+  add = ()=&gt;{
+    this.setState({ count: this.state.count + 1 })
+  }
+  minus = ()=&gt;{
+    this.setState({ count: this.state.count - 1 })
+  }
+    render() { // react 는 자동으로 이 render method 를 실행하려 함
+    return &lt;div&gt;
+      &lt;h1&gt;The number is : {this.state.count}&lt;/h1&gt;
+      &lt;button onClick={this.add}&gt;Add&lt;/button&gt;
+      &lt;button onClick={this.minus}&gt;Minus&lt;/button&gt;
+    &lt;/div&gt;
+  }
+}
+
+export default App;</code></pre>
+<p>또한 react 는 state 라는 것을 항상 refresh(rerender) 해 주기 때문에 아래와 같은 방식(callback fn + current)으로 바로 현재의 state 를 전달할 수 도 있다.</p>
+<pre><code class="language-javascript">import React from "react";
+
+class App extends React.Component{
+  state = {
+    count: 0
+  };
+  add = ()=&gt;{
+    this.setState(current=&gt;({ count: current.count + 1 }))
+  }
+  minus = ()=&gt;{
+    this.setState(current=&gt;({ count: current.count - 1 }))
+  }
+    render() { // react 는 자동으로 이 render method 를 실행하려 함
+    return &lt;div&gt;
+      &lt;h1&gt;The number is : {this.state.count}&lt;/h1&gt;
+      &lt;button onClick={this.add}&gt;Add&lt;/button&gt;
+      &lt;button onClick={this.minus}&gt;Minus&lt;/button&gt;
+    &lt;/div&gt;
+  }
+}
+
+export default App;</code></pre>
+<h3 id="3-2-component-life-cycle-08-07-">3.2 Component Life Cycle (08:07)</h3>
+<p>component 의 life cycle 의 대략적인 주기는 아래와 같다.</p>
+<p><img src="./image/img10.png" alt="react component life cycle"></p>
+<pre><code class="language-javascript">import React from "react";
+
+class App extends React.Component{
+  constructor(props){
+    super(props)
+    console.log("1. mount-constructor");
+  }
+  state = {
+    count: 0
+  };
+  add = ()=&gt;{
+    this.setState(current=&gt;({ count: current.count + 1 }))
+  }
+  minus = ()=&gt;{
+    this.setState(current=&gt;({ count: current.count - 1 }))
+  }
+  componentDidMount(){
+    console.log("3. mount-component rendered");
+  }
+  componentDidUpdate(){
+    console.log("4. update-component update");
+  }
+  componentWillUnmount(){
+    console.log("5. unMount-component upmount");
+  }
+    render() { // react 는 자동으로 이 render method 를 실행하려 함
+      console.log("2. mount-render");
+      return &lt;div&gt;
+      &lt;h1&gt;The number is : {this.state.count}&lt;/h1&gt;
+      &lt;button onClick={this.add}&gt;Add&lt;/button&gt;
+      &lt;button onClick={this.minus}&gt;Minus&lt;/button&gt;
+    &lt;/div&gt;
+  }
+}
+
+export default App;</code></pre>
+<p><strong>add 버튼 클릭했을 시 console 창</strong></p>
+<pre><code>[HMR] Waiting for update signal from WDS...
+App.js:6 1. mount-constructor
+App.js:27 2. mount-render
+App.js:18 3. mount-component rendered
+App.js:27 2. mount-render
+App.js:21 4. update-component update</code></pre><h3 id="3-3-planning-the-movie-component-05-02-">3.3 Planning the Movie Component (05:02)</h3>
+<h2 id="4-making-the-movie-app">4. MAKING THE MOVIE APP</h2>
+<h3 id="4-0-fetching-movies-from-api-08-43-">4.0 Fetching Movies from API (08:43)</h3>
+<h3 id="4-1-rendering-the-movies-11-01-">4.1 Rendering the Movies (11:01)</h3>
+<h3 id="4-2-styling-the-movies-06-21-">4.2 Styling the Movies (06:21)</h3>
+<h3 id="4-3-adding-genres-06-16-">4.3 Adding Genres (06:16)</h3>
+<h3 id="4-4-styles-timelapse-05-31-">4.4 Styles Timelapse (05:31)</h3>
+<h3 id="4-5-cutting-the-summary-03-23-">4.5 Cutting the summary (03:23)</h3>
+<h3 id="5-conclusions">5. CONCLUSIONS</h3>
+<h3 id="5-0-deploying-to-github-pages-07-37-">5.0 Deploying to Github Pages (07:37)</h3>
+<h3 id="5-1-are-we-done-04-26-">5.1 Are we done? (04:26)</h3>
+<h2 id="6-routing-bonus">6. ROUTING BONUS</h2>
+<h3 id="6-0-getting-ready-for-the-router-04-14-">6.0 Getting Ready for the Router (04:14)</h3>
+<h3 id="6-1-building-the-router-08-51-">6.1 Building the Router (08:51)</h3>
+<h3 id="6-2-building-the-navigation-05-36-">6.2 Building the Navigation (05:36)</h3>
+<h3 id="6-3-sharing-props-between-routes-07-47-">6.3 Sharing Props Between Routes (07:47)</h3>
+<h3 id="6-4-redirecting-08-53-">6.4 Redirecting (08:53)</h3>
 </article></div><div style="background-color: #b4b2b2;width: 50px;height:50px;line-height: 50px;text-align: center;position: fixed;bottom: 10px;right: 10px;padding-top:5px;" onclick="document.documentElement.scrollTop = document.body.scrollTop =0;">
   <svg t="1533629773982" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1035" xmlns:xlink="http://www.w3.org/1999/xlink" width="40" height="40"><defs><style type="text/css">@font-face { font-family: uc-nexus-iconfont; src: url("chrome-extension://pogijhnlcfmcppgimcaccdkmbedjkmhi/res/font_9qmmi8b8jsxxbt9.woff") format("woff"), url("chrome-extension://pogijhnlcfmcppgimcaccdkmbedjkmhi/res/font_9qmmi8b8jsxxbt9.ttf") format("truetype"); }
   </style></defs><path d="M536.255427 195.182354c-7.804756-7.804756-17.966187-11.615549-28.311813-11.615549-9.43693 0-18.874883 3.449565-26.496467 10.163477-2.360767 1.452071-4.356214 3.267417-6.352685 5.262864L218.47792 455.611735c-15.607466 15.60542-15.607466 40.834011 0 56.43943 15.607466 15.607466 41.558511 15.607466 57.167001 0l193.46013-192.733583 0 600.526219c0 22.1423 17.787108 39.927361 39.927361 39.927361 22.140253 0 39.927361-17.785062 39.927361-39.927361L548.959773 319.317583 737.15704 508.422522c15.607466 15.607466 40.469714 15.607466 56.078203 0 15.607466-15.607466 15.425318-40.834011-0.182149-56.441477L536.255427 195.182354 536.255427 195.182354z" p-id="1036" fill="#333"></path><path d="M101.784174 143.097092l816.674071 0c22.140253 0 39.925315-17.785062 39.925315-39.927361 0-22.140253-17.784038-39.925315-39.925315-39.925315L101.784174 63.244416c-22.140253 0-39.927361 17.785062-39.927361 39.925315C61.856813 125.31203 79.643921 143.097092 101.784174 143.097092L101.784174 143.097092z" p-id="1037" fill="#333"></path></svg>

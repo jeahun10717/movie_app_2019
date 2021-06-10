@@ -480,7 +480,7 @@ function Food(props) {
 
 위의 소스에서 서버에서 받아오는 데이터중 name 에 해당하는 필드는 반드시 string 이여야 한다면 기존의 react 는 아래와 같이 아무런 오류를 잡아주지 못한다.
 
-![use map for reveal API data](./image/img6.png)
+![use map for reveal API data](./image/img7.png)
 
 하지만 prop-types 를 아래와 같이 사용하면 오류를 뱉어준다.
 
@@ -519,3 +519,233 @@ Food.propTypes = {
   image: PropTypes.string.isRequired,  //image 는 반드시 string 이여야 한다.
 }
 ```
+
+![prop-types](./image/img8.png)
+
+## 3. STATE
+
+이제까지 살펴봤던 Component 들은 함수형 Component 였다. state 를 배우기 앞서 Class Component 를 배워보자.
+
+### 3.0 Class Components and State (10:11)
+
+react Class Component 의 기본 구성은 아래와 같다
+
+```javascript
+import React from "react";
+
+class App extends React.Component{ // 1.
+  state = {
+    count: 0
+  };
+  add = ()=>{
+    console.log("add");
+  }
+  minus = ()=>{
+    console.log("minus");
+  }
+    render() { // 2.
+    return <div>
+      <h1>The number is : {this.state.count}</h1> // 3.
+      <button onClick={this.add}>Add</button> // 4.
+      <button onClick={this.minus}>Minus</button>
+    </div>
+  }
+}
+
+export default App;
+```
+
+1. class App extends React.Component 의 의미
+React.Component 라는 부모에게 App 이라는 자식이 그 속성을 상속 받았다는 뜻.
+2. functional Component 와는 다른 점
+functional Component 와는 달리 class 는 함수가 아니므로 return 이 존재하지 않으며 render 라는 함수를 사용해야 한다.
+3. class 형 Component 를 사용하는 이유
+state 를 사용하기 위함인데 위의 소스와 같이 state 도 기본적으로 객체이므로 위와 같이 접근하면 된다.
+4. button onClick
+여기서는 주의점인데 이벤트 사용시 아래를 주의해야 한다.
+* 기본 html onclick 과 달리 react onClick은 [헝가리안 표기법](https://namu.wiki/w/%ED%97%9D%EA%B0%80%EB%A6%AC%EC%95%88%20%ED%91%9C%EA%B8%B0%EB%B2%95)을 따른다 --> onclick(x) onClick(o)
+* 기본적으로 이벤트는 함수선언식으로 해야 한다.
+```javascript
+<button onClick={this.add}>Add</button> // (O)
+<button onClick={this.add()}>Add</button> // (X)
+```
+(조금만 생각해 보면 당연한 것. render 가 실행되면서 만약 this.add() 를 만나면 바로 실행 됨. 우리가 원하는 것은 클릭이 되었을 때 실행이 되야 하는 것이다. 따라서 onClick 이라는 곳에 함수를 할당하는 것으로 생각해야 한다.)
+
+### 3.1 All you need to know about State (07:55)
+
+이제 state 를 사용하는 방법을 알아보자.
+
+```javascript
+import React from "react";
+
+class App extends React.Component{
+  state = {
+    count: 0
+  };
+  add = ()=>{
+    this.setState({ state: state+1 });
+  }
+  minus = ()=>{
+    this.setState({ state: state-1 });
+  }
+    render() { // react 는 자동으로 이 render method 를 실행하려 함
+    return <div>
+      <h1>The number is : {this.state.count}</h1>
+      <button onClick={this.add}>Add</button>
+      <button onClick={this.minus}>Minus</button>
+    </div>
+  }
+}
+
+export default App;
+```
+
+우리가 원하는 것은 add 라는 버튼을 눌렀을 때 1이 올라가고 Minus 를 눌렀을 때 1이 내려가는 것을 원한다. 하지만 위의 소스를 실행하면 정상동작하지 않고 아래의 경고 메시지를 준다.
+
+![prop-types](./image/img9.png)
+
+이는 react 는 state 의 직접접근을 허용하지 않기 때문이다. 따러서 **setState** 라는 메소드를 사용해야 한다.
+
+```javascript
+import React from "react";
+
+class App extends React.Component{
+  state = {
+    count: 0
+  };
+  add = ()=>{
+    this.setState({ count: this.state.count + 1 })
+  }
+  minus = ()=>{
+    this.setState({ count: this.state.count - 1 })
+  }
+    render() { // react 는 자동으로 이 render method 를 실행하려 함
+    return <div>
+      <h1>The number is : {this.state.count}</h1>
+      <button onClick={this.add}>Add</button>
+      <button onClick={this.minus}>Minus</button>
+    </div>
+  }
+}
+
+export default App;
+```
+
+또한 react 는 state 라는 것을 항상 refresh(rerender) 해 주기 때문에 아래와 같은 방식(callback fn + current)으로 바로 현재의 state 를 전달할 수 도 있다.
+
+```javascript
+import React from "react";
+
+class App extends React.Component{
+  state = {
+    count: 0
+  };
+  add = ()=>{
+    this.setState(current=>({ count: current.count + 1 }))
+  }
+  minus = ()=>{
+    this.setState(current=>({ count: current.count - 1 }))
+  }
+    render() { // react 는 자동으로 이 render method 를 실행하려 함
+    return <div>
+      <h1>The number is : {this.state.count}</h1>
+      <button onClick={this.add}>Add</button>
+      <button onClick={this.minus}>Minus</button>
+    </div>
+  }
+}
+
+export default App;
+```
+
+### 3.2 Component Life Cycle (08:07)
+
+component 의 life cycle 의 대략적인 주기는 아래와 같다.
+
+![react component life cycle](./image/img10.png)
+
+```javascript
+import React from "react";
+
+class App extends React.Component{
+  constructor(props){
+    super(props)
+    console.log("1. mount-constructor");
+  }
+  state = {
+    count: 0
+  };
+  add = ()=>{
+    this.setState(current=>({ count: current.count + 1 }))
+  }
+  minus = ()=>{
+    this.setState(current=>({ count: current.count - 1 }))
+  }
+  componentDidMount(){
+    console.log("3. mount-component rendered");
+  }
+  componentDidUpdate(){
+    console.log("4. update-component update");
+  }
+  componentWillUnmount(){
+    console.log("5. unMount-component upmount");
+  }
+    render() { // react 는 자동으로 이 render method 를 실행하려 함
+      console.log("2. mount-render");
+      return <div>
+      <h1>The number is : {this.state.count}</h1>
+      <button onClick={this.add}>Add</button>
+      <button onClick={this.minus}>Minus</button>
+    </div>
+  }
+}
+
+export default App;
+```
+
+**add 버튼 클릭했을 시 console 창**
+
+```
+[HMR] Waiting for update signal from WDS...
+App.js:6 1. mount-constructor
+App.js:27 2. mount-render
+App.js:18 3. mount-component rendered
+App.js:27 2. mount-render
+App.js:21 4. update-component update
+```
+
+### 3.3 Planning the Movie Component (05:02)
+
+
+
+## 4. MAKING THE MOVIE APP
+
+### 4.0 Fetching Movies from API (08:43)
+
+### 4.1 Rendering the Movies (11:01)
+
+### 4.2 Styling the Movies (06:21)
+
+### 4.3 Adding Genres (06:16)
+
+### 4.4 Styles Timelapse (05:31)
+
+### 4.5 Cutting the summary (03:23)
+
+### 5. CONCLUSIONS
+
+### 5.0 Deploying to Github Pages (07:37)
+
+### 5.1 Are we done? (04:26)
+
+## 6. ROUTING BONUS
+
+### 6.0 Getting Ready for the Router (04:14)
+
+### 6.1 Building the Router (08:51)
+
+### 6.2 Building the Navigation (05:36)
+
+### 6.3 Sharing Props Between Routes (07:47)
+
+### 6.4 Redirecting (08:53)
