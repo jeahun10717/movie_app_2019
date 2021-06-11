@@ -716,13 +716,170 @@ App.js:21 4. update-component update
 
 ### 3.3 Planning the Movie Component (05:02)
 
-
-
 ## 4. MAKING THE MOVIE APP
+
+이제 본격적으로 moive app 을 만들어보자. REST API 를 통해 데이터를 받아오는데 아래의 주소를 이용한 REST API 서버를 이용할 것이다.
+
+`https://yts-proxy.nomadcoders1.now.sh/list_movies.json`
 
 ### 4.0 Fetching Movies from API (08:43)
 
+js 기본기능으로 REST API 데이터를 가져오는 방법에는 fetch 가 있다. 하지만 우리는 조금 더 나은 방법인 axios 를 사용할 것이다.
+
+**How to Install**
+
+```
+npm install axios -save
+```
+
+이제 axios 를 통해 YTS movie 서버로부터 데이터를 가져와 보자.
+
+```javascript
+import React from "react";
+import axios from "axios";
+
+class App extends React.Component{
+  state = {
+    isLoading: true
+  };
+  getMovies = async () => {
+    const movie = await axios.get("https://yts-proxy.nomadcoders1.now.sh/list_movies.json")
+  }
+  componentDidMount() {
+    this.getMovies();
+  }
+
+  render(){
+    const {isLoading} = this.state;
+    return <div>{isLoading ? "Loading" : "we are ready"}</div>
+  }
+}
+
+export default App;
+```
+
+위의 소스에서 `async` 는 비동기 처리를 위한 기능이다. `moive` 라는 데이터가 다 받아오기도 전에 다른 작업, 예를 들면 다른 배열에 저장하는 등의 작업을 하면 당연히 에러가 발생한다. 이를 위해 `axios.get` 이라는 기능이 끝날 때 까지 기다리게 하는 것이 `async-await` 이다.
+
 ### 4.1 Rendering the Movies (11:01)
+
+```javascript
+await axios.get("https://yts-proxy.nomadcoders1.now.sh/list_movies.json")
+```
+
+위의 데이터를 요청했을 때 request 는 아래와 같다.
+
+![react img](./image/img11.png)
+
+위의 데이터 중 우리는 movies 라는 데이터를 가져온다면 아래와 같은 소스가 된다.
+
+```javascript
+import React from "react";
+import axios from "axios";
+
+class App extends React.Component{
+  state = {
+    isLoading: true
+  };
+  getMovies = async () => {
+    const movie = await axios.get("https://yts-proxy.nomadcoders1.now.sh/list_movies.json")
+    const movieList = movie.data.data.movies
+    console.log(movieList);
+  }
+
+  componentDidMount() {
+    this.getMovies();
+  }
+
+  render(){
+    const {isLoading} = this.state;
+    return <div>{isLoading ? "Loading" : "we are ready"}</div>
+  }
+}
+
+export default App;
+```
+
+아래의 2개의 소스는 완전히 동일히다. 2번 소스는 ES6 를 적극이용한 소스이다.
+
+**[1]**
+```javascript
+getMovies = async () => {
+  const movie = await axios.get("https://yts-proxy.nomadcoders1.now.sh/list_movies.json")
+  const movieList = movie.data.data.movies
+  console.log(movieList);
+}
+```
+**[2]**
+```javascript
+getMovies = async () => {
+  const {data: {data: {movies}}} = await axios.get("https://yts-proxy.nomadcoders1.now.sh/list_movies.json")
+  console.log(movies);
+}
+```
+
+![react img](./image/img12.png)
+
+위의 자료들 중 우리가 이용할 자료들을 추려서 또 다른 Component를 만들어보자.
+
+**[/src/Movie.js]**
+
+```javascript
+import React from "react";
+import PropTypes from "prop-types"
+
+function Movie({id, year, title, summary, poster}){
+    return <h5>{title}</h5>
+}
+
+Movie.propTypes = {
+    id: PropTypes.number.isRequired,
+    year: PropTypes.number.isRequired,
+    title: PropTypes.string.isRequired,
+    summary: PropTypes.string.isRequired,
+    poster: PropTypes.string.isRequired,
+}
+
+export default Movie;
+```
+
+**[/src/App.js]**
+
+```javascript
+import React from "react";
+import axios from "axios";
+
+import Movie from "./Movie";
+
+class App extends React.Component{
+  state = {
+    isLoading: true,
+    movies: []
+  };
+
+  getMovies = async () => {
+    const {data: {data: {movies}}} = await axios.get("https://yts-proxy.nomadcoders1.now.sh/list_movies.json?sort_by=rating") // ?sort_by=rating 은 yts 사이트가 제공하는 쿼리이다.
+    this.setState({movies, isLoading: false}) // {movies:movies} {moives} 는 완전히 같은 기능임
+  }
+  componentDidMount() {
+    this.getMovies();
+  }
+
+  render(){
+    const {isLoading, movies} = this.state;
+    return <div>{isLoading ? "Loading" : movies.map(movie=>{
+      return <Movie
+      key={movie.id}
+      id={movie.id}
+      year={movie.year}
+      title={movie.title}
+      summary={movie.summary}
+      poster={movie.medium_cover_image}/>
+    })}</div>
+  }
+}
+
+export default App;
+```
 
 ### 4.2 Styling the Movies (06:21)
 

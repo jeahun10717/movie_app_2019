@@ -1,35 +1,37 @@
 import React from "react";
+import axios from "axios";
+
+import Movie from "./Movie";
 
 class App extends React.Component{
-  constructor(props){
-    super(props)
-    console.log("1. mount-constructor");
-  }
   state = {
-    count: 0
+    isLoading: true,
+    movies: []
   };
-  add = ()=>{
-    this.setState(current=>({ count: current.count + 1 }))
+  // getMovies = async () => {
+  //   const movie = await axios.get("https://yts-proxy.nomadcoders1.now.sh/list_movies.json")
+  //   console.log(movie);
+  //   console.log(movie.data.data.movies);
+  // }
+  getMovies = async () => {
+    const {data: {data: {movies}}} = await axios.get("https://yts-proxy.nomadcoders1.now.sh/list_movies.json?sort_by=rating")
+    this.setState({movies, isLoading: false}) // {movies:movies} {moives} 는 완전히 같은 기능임
   }
-  minus = ()=>{
-    this.setState(current=>({ count: current.count - 1 }))
+  componentDidMount() {
+    this.getMovies();
   }
-  componentDidMount(){
-    console.log("3. mount-component rendered");
-  }
-  componentDidUpdate(){
-    console.log("4. update-component update");
-  }
-  componentWillUnmount(){
-    console.log("5. unMount-component upmount");
-  }
-    render() { // react 는 자동으로 이 render method 를 실행하려 함
-      console.log("2. mount-render");
-      return <div>
-      <h1>The number is : {this.state.count}</h1>
-      <button onClick={this.add}>Add</button>
-      <button onClick={this.minus}>Minus</button>
-    </div>
+
+  render(){
+    const {isLoading, movies} = this.state;
+    return <div>{isLoading ? "Loading" : movies.map(movie=>(
+       <Movie
+      key={movie.id}
+      id={movie.id} 
+      year={movie.year} 
+      title={movie.title} 
+      summary={movie.summary} 
+      poster={movie.medium_cover_image}/>
+    ))}</div>
   }
 }
 
