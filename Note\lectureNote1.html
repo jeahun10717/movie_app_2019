@@ -717,6 +717,70 @@ export default App;</code></pre>
 <h3 id="4-5-cutting-the-summary-03-23-">4.5 Cutting the summary (03:23)</h3>
 <h3 id="5-conclusions">5. CONCLUSIONS</h3>
 <h3 id="5-0-deploying-to-github-pages-07-37-">5.0 Deploying to Github Pages (07:37)</h3>
+<p>Github 에서는 정적 서버를 제공한다. 이를 올리는 방법에 대해 알아보자</p>
+<pre><code>npm i gh-pages -s</code></pre><p>위의 명령어로 gh-pages 를 설치하고 pakage.json 파일을 수정하면 된다.</p>
+<pre><code class="language-json">{
+  "name": "movie_app_2019",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.13.0",
+    "@testing-library/react": "^11.2.7",
+    "@testing-library/user-event": "^12.8.3",
+    "axios": "^0.21.1",
+    "gh-pages": "^3.2.1",
+    "prop-types": "^15.7.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-scripts": "4.0.3",
+    "web-vitals": "^1.1.2"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "deploy": "gh-pages -d build",
+    "predeploy": "npm run build"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      "&gt;0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "homepage": "https://jeahun10717.github.io/movie_app_2019/"
+}
+</code></pre>
+<p><strong>추가된 부분</strong></p>
+<ol>
+<li><br>
+
+</li>
+</ol>
+<pre><code>"deploy": "gh-pages -d build",
+"predeploy": "npm run build"</code></pre><p>여기서 predeploy 는 deploy 이전에 먼저 실행된다. 반드시 {scriptName}. pre{scriptName} 에서 scriptName 이 일치해야만 pre{scriptName} 이 먼저 실행된다.</p>
+<ol start="2">
+<li><br>
+
+</li>
+</ol>
+<pre><code>"homepage": "https://jeahun10717.github.io/movie_app_2019/"/</code></pre><p>homepage url : <code>http://{github ID.github.io/{repository name}</code></p>
+<p>이 이후 npm run deploy 를 실행시키면 아래의 사진과 같이 동작함을 볼 수 있다.</p>
+<p><a href="https://jeahun10717.github.io/movie_app_2019/">movie_App test url</a>
+<img src="./image/img13.png" alt="movie_app img"></p>
 <h3 id="5-1-are-we-done-04-26-">5.1 Are we done? (04:26)</h3>
 <h2 id="6-routing-bonus">6. ROUTING BONUS</h2>
 <h3 id="6-0-getting-ready-for-the-router-04-14-">6.0 Getting Ready for the Router (04:14)</h3>

@@ -893,6 +893,86 @@ export default App;
 
 ### 5.0 Deploying to Github Pages (07:37)
 
+Github 에서는 정적 서버를 제공한다. 이를 올리는 방법에 대해 알아보자
+
+```
+npm i gh-pages -s
+```
+
+위의 명령어로 gh-pages 를 설치하고 pakage.json 파일을 수정하면 된다.
+
+
+```json
+{
+  "name": "movie_app_2019",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.13.0",
+    "@testing-library/react": "^11.2.7",
+    "@testing-library/user-event": "^12.8.3",
+    "axios": "^0.21.1",
+    "gh-pages": "^3.2.1",
+    "prop-types": "^15.7.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-scripts": "4.0.3",
+    "web-vitals": "^1.1.2"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "deploy": "gh-pages -d build",
+    "predeploy": "npm run build"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "homepage": "https://jeahun10717.github.io/movie_app_2019/"
+}
+
+```
+
+**추가된 부분**
+
+1. </br>
+
+```
+"deploy": "gh-pages -d build",
+"predeploy": "npm run build"
+```
+여기서 predeploy 는 deploy 이전에 먼저 실행된다. 반드시 {scriptName}. pre{scriptName} 에서 scriptName 이 일치해야만 pre{scriptName} 이 먼저 실행된다.
+
+2.  </br>
+
+```
+"homepage": "https://jeahun10717.github.io/movie_app_2019/"/
+```
+homepage url : `http://{github ID.github.io/{repository name}`
+
+이 이후 npm run deploy 를 실행시키면 아래의 사진과 같이 동작함을 볼 수 있다.
+
+[movie_App test url](https://jeahun10717.github.io/movie_app_2019/)
+![movie_app img](./image/img13.png)
+
+
 ### 5.1 Are we done? (04:26)
 
 ## 6. ROUTING BONUS
