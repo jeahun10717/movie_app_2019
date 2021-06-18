@@ -977,11 +977,157 @@ homepage url : `http://{github ID.github.io/{repository name}`
 
 ## 6. ROUTING BONUS
 
+우리는 기존까지 싱글페이지에 대한 작업만을 했다. 이제 router(react-router-dom) 을 통해 멀티페이지 사이트를 만들어 보자.
+
 ### 6.0 Getting Ready for the Router (04:14)
+
+router 를 사용하기 위해 아래 모듈을 설치하면 된다.
+
+```
+npm i react-router-dom -s
+```
 
 ### 6.1 Building the Router (08:51)
 
+react 에서 multi-page 를 만들기 위해 우리는 react-router-dom 을 사용한다.</br>
+사용방법은 아래와 같다.
+
+```javascript
+import React from "react";
+import { HashRouter, Route } from "react-router-dom";
+import Home from "./routes/Home"
+import About from "./routes/About"
+
+function App() {
+  return (<HashRouter>
+    <Route path="/home">
+      <h1>Home</h1>
+    </Route>
+    <Route path="/home/Introduction">
+      <h1>Introduction</h1>
+    </Route>
+    <Route path="/about">
+      <h1>About</h1>
+    </Route>
+  </HashRouter>)
+}
+
+export default App;
+```
+
+우리가 원하는 결과는 `/home` 에서는 **Home 만** 출력 되고 `/home/Introduction` 에서는 **Introduction 만** 출력되는 것이다. 하지만 막상 `/home/Introduction` 에서는 **Home**과 **Introduction** 이 모두 출력된다.(아래 사진)
+
+![movie_app img](./image/img14.png)
+
+ 이는 react-router-dom 이 라우터를 거치면서 모든 Component 를 생성하기 떄문이다. 이를 해결하기 위해서는 `exact={true}` 를 사용해야 한다.
+
+```javascript
+import React from "react";
+import { HashRouter, Route } from "react-router-dom";
+import Home from "./routes/Home"
+import About from "./routes/About"
+
+function App() {
+  return (<HashRouter>
+    <Route path="/home" exact={true}>
+      <h1>Home</h1>
+    </Route>
+    <Route path="/home/Introduction" exact={true}>
+      <h1>Introduction</h1>
+    </Route>
+    <Route path="/about" exact={true}>
+      <h1>About</h1>
+    </Route>
+  </HashRouter>)
+}
+
+export default App;
+```
+
+`exact={true}` 를 사용하면 해당 url 그 url 에 할당된 component 만을 렌더링하게 된다.
+
+![movie_app img](./image/img15.png)
+
+이제 우리가 만들고 있던 movie 앱에 이것을 적용해 보자.
+
+```javascript
+import React from "react";
+import { HashRouter, Route } from "react-router-dom";
+import Home from "./routes/Home"
+import About from "./routes/About"
+
+function App() {
+  return (<HashRouter>
+    <Route path="/" exact={true} component={Home}/>
+    <Route path="/about" exact={true} component={About}/>
+  </HashRouter>)
+}
+
+export default App;
+```
+
+
 ### 6.2 Building the Navigation (05:36)
+
+이제 다른 페이지로 이동하기 위한 Navigation 을 만들어 보자
+
+**[/App.js]**
+
+ ```javascript
+ import React from "react";
+ import { HashRouter, Route } from "react-router-dom";
+ import Navigation from "./components/Navigation"
+ import Home from "./routes/Home"
+ import About from "./routes/About"
+
+
+ function App() {
+   return (<HashRouter>
+     <Navigation />
+     <Route path="/" exact={true} component={Home}/>
+     <Route path="/about" exact={true} component={About}/>
+   </HashRouter>)
+ }
+
+ export default App;
+ ```
+
+**[/components/Navigation.js]**
+
+```javascript
+import React from "react";
+
+function Navigation() {
+    return <div>
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+    </div>
+}
+
+export default Navigation;
+```
+
+아래와 같은 결과창이 나오며 동작도 잘 한다.
+
+![movie_app img](./image/img16.png)
+
+하지만 about 을 클랙 했을 때 페이지를 리로드 하게 된다. 이는 우리가 react 를 쓰는 의미가 없어지는 것이다. 이를 위해 우리는 `Link-to` 를 사용하면 된다.
+
+```javascript
+import React from "react";
+import { Link } from "react-router-dom";
+
+function Navigation() {
+    return <div>
+        <Link to="/">Home</Link>
+        <Link to="/about">About</Link>
+    </div>
+}
+
+export default Navigation;
+```
+
+이렇게 하면 링크를 누를 때 마다 react 를 죽이고 새로 생성하지 않게 된디.
 
 ### 6.3 Sharing Props Between Routes (07:47)
 
