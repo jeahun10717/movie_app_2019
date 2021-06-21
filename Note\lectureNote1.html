@@ -894,6 +894,75 @@ function Navigation() {
 export default Navigation;</code></pre>
 <p>이렇게 하면 링크를 누를 때 마다 react 를 죽이고 새로 생성하지 않게 된디.</p>
 <h3 id="6-3-sharing-props-between-routes-07-47-">6.3 Sharing Props Between Routes (07:47)</h3>
+<p>기본적인 라우팅을 통한 multi-page 는 위에서 구현하였다. 이제 각각의 페이지에서 다른 페이지로 정보를 이동시키는 기능을 구현 해 보자. 이제부터 만들 기능은 각각의 영화를 클릭 했을 때 상세보기 페이지로 넘어가는 것이다.</p>
+<p><strong>[/src/components/Movie.js]</strong></p>
+<pre><code class="language-javascript">import React from "react";
+import PropTypes from "prop-types";
+import "./Movie.css";
+import { Link } from "react-router-dom";
+
+function Movie({ year, title, summary, poster, genres }) {
+  return (
+    &lt;Link to={{
+      pathname: "/movie-detail",
+      state:{
+        year,
+        title,
+        summary,
+        poster,
+        genres
+      }
+    }}&gt;
+      &lt;div className="movie"&gt;
+        &lt;img src={poster} alt={title} title={title} /&gt;
+        &lt;div className="movie__data"&gt;
+          &lt;h3 className="movie__title"&gt;{title}&lt;/h3&gt;
+          &lt;h5 className="movie__year"&gt;{year}&lt;/h5&gt;
+          &lt;ul className="movie__genres"&gt;
+            {genres.map((genre, index) =&gt; (
+              &lt;li key={index} className="genres__genre"&gt;
+                {genre}
+              &lt;/li&gt;
+            ))}
+          &lt;/ul&gt;
+          &lt;p className="movie__summary"&gt;{summary.slice(0, 180)}...&lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/Link&gt;
+  );
+}
+
+Movie.propTypes = {
+  id: PropTypes.number.isRequired,
+  year: PropTypes.number.isRequired,
+  title: PropTypes.string.isRequired,
+  summary: PropTypes.string.isRequired,
+  poster: PropTypes.string.isRequired,
+  genres: PropTypes.arrayOf(PropTypes.string).isRequired
+};
+
+export default Movie;</code></pre>
+<p><strong>[/src/App.js]</strong></p>
+<pre><code class="language-javascript">import React from "react";
+import { HashRouter, Route } from "react-router-dom";
+import Navigation from "./components/Navigation"
+import Home from "./routes/Home"
+import About from "./routes/About"
+import Detail from "./routes/Detail"
+
+
+function App() {
+  return (&lt;HashRouter&gt;
+    &lt;Navigation /&gt;
+    &lt;Route path="/" exact={true} component={Home}/&gt;
+    &lt;Route path="/about" exact={true} component={About}/&gt;
+    &lt;Route path="/movie-detail" exact={true} component={Detail}/&gt;
+  &lt;/HashRouter&gt;)
+}
+
+export default App;</code></pre>
+<p>위의 소스에서 <code>Movie.js</code> 의 <code>year</code>, <code>title</code>, <code>summary</code>, <code>poster</code>, <code>genres</code> <code>props</code> 를<code>App.js</code> 에 <code>/movie-detail</code> router 에 전달했다. 이에 대한 결과는 아래와 같다.</p>
+<p><img src="./image/img18.png" alt="movie_app img"></p>
 <h3 id="6-4-redirecting-08-53-">6.4 Redirecting (08:53)</h3>
 </article></div><div style="background-color: #b4b2b2;width: 50px;height:50px;line-height: 50px;text-align: center;position: fixed;bottom: 10px;right: 10px;padding-top:5px;" onclick="document.documentElement.scrollTop = document.body.scrollTop =0;">
   <svg t="1533629773982" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1035" xmlns:xlink="http://www.w3.org/1999/xlink" width="40" height="40"><defs><style type="text/css">@font-face { font-family: uc-nexus-iconfont; src: url("chrome-extension://pogijhnlcfmcppgimcaccdkmbedjkmhi/res/font_9qmmi8b8jsxxbt9.woff") format("woff"), url("chrome-extension://pogijhnlcfmcppgimcaccdkmbedjkmhi/res/font_9qmmi8b8jsxxbt9.ttf") format("truetype"); }

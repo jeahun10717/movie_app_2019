@@ -1131,4 +1131,85 @@ export default Navigation;
 
 ### 6.3 Sharing Props Between Routes (07:47)
 
+기본적인 라우팅을 통한 multi-page 는 위에서 구현하였다. 이제 각각의 페이지에서 다른 페이지로 정보를 이동시키는 기능을 구현 해 보자. 이제부터 만들 기능은 각각의 영화를 클릭 했을 때 상세보기 페이지로 넘어가는 것이다.
+
+**[/src/components/Movie.js]**
+
+```javascript
+import React from "react";
+import PropTypes from "prop-types";
+import "./Movie.css";
+import { Link } from "react-router-dom";
+
+function Movie({ year, title, summary, poster, genres }) {
+  return (
+    <Link to={{
+      pathname: "/movie-detail",
+      state:{
+        year,
+        title,
+        summary,
+        poster,
+        genres
+      }
+    }}>
+      <div className="movie">
+        <img src={poster} alt={title} title={title} />
+        <div className="movie__data">
+          <h3 className="movie__title">{title}</h3>
+          <h5 className="movie__year">{year}</h5>
+          <ul className="movie__genres">
+            {genres.map((genre, index) => (
+              <li key={index} className="genres__genre">
+                {genre}
+              </li>
+            ))}
+          </ul>
+          <p className="movie__summary">{summary.slice(0, 180)}...</p>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+Movie.propTypes = {
+  id: PropTypes.number.isRequired,
+  year: PropTypes.number.isRequired,
+  title: PropTypes.string.isRequired,
+  summary: PropTypes.string.isRequired,
+  poster: PropTypes.string.isRequired,
+  genres: PropTypes.arrayOf(PropTypes.string).isRequired
+};
+
+export default Movie;
+```
+
+**[/src/App.js]**
+
+```javascript
+import React from "react";
+import { HashRouter, Route } from "react-router-dom";
+import Navigation from "./components/Navigation"
+import Home from "./routes/Home"
+import About from "./routes/About"
+import Detail from "./routes/Detail"
+
+
+function App() {
+  return (<HashRouter>
+    <Navigation />
+    <Route path="/" exact={true} component={Home}/>
+    <Route path="/about" exact={true} component={About}/>
+    <Route path="/movie-detail" exact={true} component={Detail}/>
+  </HashRouter>)
+}
+
+export default App;
+```
+
+위의 소스에서 `Movie.js` 의 `year`, `title`, `summary`, `poster`, `genres` `props` 를` App.js` 에 `/movie-detail` router 에 전달했다. 이에 대한 결과는 아래와 같다.
+
+![movie_app img](./image/img18.png)
+
+
 ### 6.4 Redirecting (08:53)
