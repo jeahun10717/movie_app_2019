@@ -964,6 +964,23 @@ export default App;</code></pre>
 <p>위의 소스에서 <code>Movie.js</code> 의 <code>year</code>, <code>title</code>, <code>summary</code>, <code>poster</code>, <code>genres</code> <code>props</code> 를<code>App.js</code> 에 <code>/movie-detail</code> router 에 전달했다. 이에 대한 결과는 아래와 같다.</p>
 <p><img src="./image/img18.png" alt="movie_app img"></p>
 <h3 id="6-4-redirecting-08-53-">6.4 Redirecting (08:53)</h3>
+<p>home 에서 movie content 를 클릭해서 들어가는 것이 아닌 직접 접근하는 경우 state 를 전달해 주지 못한다. 아제 이것을 컨트롤 해 보자.</p>
+<pre><code class="language-javascript">import React from "react";
+
+class Detail extends React.Component{
+    componentDidMount(){
+        const { location, history } = this.props;
+        if(location.state === undefined){
+            history.push("/");
+        }
+    }
+    render(){
+        return &lt;span&gt;hello&lt;/span&gt;
+    }
+}
+
+export default Detail;</code></pre>
+<p>위의 조건문의 <code>location.state</code> 는 <code>Movie.js</code> 에서 받아오는 <code>props</code> 이다. 이것이 <code>undefined</code> 가 된다는 것은 다른 곳에서 전달해준 <code>props</code>(이 프로젝트에서는 <code>Movie.js</code> 에서 보내주는 <code>props</code>) 가 없다는 것, 즉 <code>Link</code> 태그를 탄 것이 아니라 직접 접근 했다는 것이다. 이제 여기서 <code>history.push</code> 로 <code>/</code> 로 <code>redirect</code> 했다.</p>
 </article></div><div style="background-color: #b4b2b2;width: 50px;height:50px;line-height: 50px;text-align: center;position: fixed;bottom: 10px;right: 10px;padding-top:5px;" onclick="document.documentElement.scrollTop = document.body.scrollTop =0;">
   <svg t="1533629773982" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1035" xmlns:xlink="http://www.w3.org/1999/xlink" width="40" height="40"><defs><style type="text/css">@font-face { font-family: uc-nexus-iconfont; src: url("chrome-extension://pogijhnlcfmcppgimcaccdkmbedjkmhi/res/font_9qmmi8b8jsxxbt9.woff") format("woff"), url("chrome-extension://pogijhnlcfmcppgimcaccdkmbedjkmhi/res/font_9qmmi8b8jsxxbt9.ttf") format("truetype"); }
   </style></defs><path d="M536.255427 195.182354c-7.804756-7.804756-17.966187-11.615549-28.311813-11.615549-9.43693 0-18.874883 3.449565-26.496467 10.163477-2.360767 1.452071-4.356214 3.267417-6.352685 5.262864L218.47792 455.611735c-15.607466 15.60542-15.607466 40.834011 0 56.43943 15.607466 15.607466 41.558511 15.607466 57.167001 0l193.46013-192.733583 0 600.526219c0 22.1423 17.787108 39.927361 39.927361 39.927361 22.140253 0 39.927361-17.785062 39.927361-39.927361L548.959773 319.317583 737.15704 508.422522c15.607466 15.607466 40.469714 15.607466 56.078203 0 15.607466-15.607466 15.425318-40.834011-0.182149-56.441477L536.255427 195.182354 536.255427 195.182354z" p-id="1036" fill="#333"></path><path d="M101.784174 143.097092l816.674071 0c22.140253 0 39.925315-17.785062 39.925315-39.927361 0-22.140253-17.784038-39.925315-39.925315-39.925315L101.784174 63.244416c-22.140253 0-39.927361 17.785062-39.927361 39.925315C61.856813 125.31203 79.643921 143.097092 101.784174 143.097092L101.784174 143.097092z" p-id="1037" fill="#333"></path></svg>

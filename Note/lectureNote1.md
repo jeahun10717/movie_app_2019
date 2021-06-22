@@ -1213,3 +1213,25 @@ export default App;
 
 
 ### 6.4 Redirecting (08:53)
+
+home 에서 movie content 를 클릭해서 들어가는 것이 아닌 직접 접근하는 경우 state 를 전달해 주지 못한다. 아제 이것을 컨트롤 해 보자.
+
+```javascript
+import React from "react";
+
+class Detail extends React.Component{
+    componentDidMount(){
+        const { location, history } = this.props;
+        if(location.state === undefined){
+            history.push("/");
+        }
+    }
+    render(){
+        return <span>hello</span>
+    }
+}
+
+export default Detail;
+```
+
+위의 조건문의 `location.state` 는 `Movie.js` 에서 받아오는 `props` 이다. 이것이 `undefined` 가 된다는 것은 다른 곳에서 전달해준 `props`(이 프로젝트에서는 `Movie.js` 에서 보내주는 `props`) 가 없다는 것, 즉 `Link` 태그를 탄 것이 아니라 직접 접근 했다는 것이다. 이제 여기서 `history.push` 로 `/` 로 `redirect` 했다.
